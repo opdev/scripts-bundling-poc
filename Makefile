@@ -8,6 +8,9 @@ VENV_CODESTYLE_BIN = $(VENV_CODESTYLE)/bin
 VENV_TOOLS = venv.tools
 VENV_TOOLS_BIN = $(VENV_TOOLS)/bin
 
+VENV_DIST = venv.dist
+VENV_DIST_BIN = $(VENV_DIST)/bin
+
 # This is what we pass to git ls-files.
 LS_FILES_INPUT_STR ?= 'src/*.py'
 
@@ -19,6 +22,14 @@ default: format lint
 .PHONY: ci.format
 ci.format: format
 	git diff --exit-code
+
+dist: venv.dist
+	$(VENV_DIST_BIN)/python3 -m build
+
+.PHONY: venv.dist
+venv.dist:
+	$(PY_BIN) -m venv $(VENV_DIST)
+	./$(VENV_DIST_BIN)/pip install --upgrade build
 
 venv.codestyle:
 	$(MAKE) venv.codestyle.always-reinstall
